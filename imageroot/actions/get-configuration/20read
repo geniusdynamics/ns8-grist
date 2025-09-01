@@ -24,3 +24,14 @@ config["lets_encrypt"] = os.getenv("TRAEFIK_LETS_ENCRYPT") == "True"
 
 # Dump the configuration to stdout
 # json.dump(config, fp=sys.stdout)
+if os.path.exists("grist.env"): 
+	data = agent.read_envfile("grist.env") 
+	config["GRIST_SINGLE_ORG"] = data.get("GRIST_SINGLE_ORG", "grist") 
+	config["GRIST_DEFAULT_EMAIL"] = data.get("GRIST_DEFAULT_EMAIL", "myemail") 
+	config["APP_HOME_URL"] = data.get("APP_HOME_URL", "https://getgrist.local") 
+else: 
+	config["GRIST_SINGLE_ORG"] = "grist" 
+	config["GRIST_DEFAULT_EMAIL"] = "myemail" 
+	config["APP_HOME_URL"] = "https://getgrist.local" 
+ 
+json.dump(config, fp=sys.stdout)
