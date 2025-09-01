@@ -15,3 +15,13 @@ data = json.load(sys.stdin)
 
 #This is specific to you module, so you need to change it accordingly.
 #agent.dump_env()
+GRIST_SINGLE_ORG = data.get("GRIST_SINGLE_ORG", "grist") 
+GRIST_DEFAULT_EMAIL = data.get("GRIST_DEFAULT_EMAIL", "myemail") 
+APP_HOME_URL = data.get("APP_HOME_URL", "https://getgrist.local") 
+ 
+grist = { 
+ "GRIST_SINGLE_ORG" : GRIST_SINGLE_ORG ,
+ "GRIST_DEFAULT_EMAIL" : GRIST_DEFAULT_EMAIL ,
+ "APP_HOME_URL" : APP_HOME_URL ,
+} 
+agent.write_envfile("grist.env", grist) 
