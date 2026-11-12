@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+#
+# Copyright (C) 2026 Genius Dynamics
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+import json
+import os
+import sys
+import agent
+import agent.tasks
+
+request = json.load(sys.stdin)
+
+host = request["host"]
+http2https = request.get("http2https", True)
+lets_encrypt = request.get("lets_encrypt", False)
+default_email = request["default_email"]
+single_org = request.get("single_org", "")
+
+# Persist the settings in the module environment
+agent.set_env("TRAEFIK_HOST", host)
+agent.set_env("TRAEFIK_HTTP2HTTPS", http2https)
+agent.set_env("TRAEFIK_LETS_ENCRYPT", lets_encrypt)
+agent.set_env("GRIST_DEFAULT_EMAIL", default_email)
+# Public URL of Grist, as seen by the browser
+scheme = "https" if http2https or lets_encrypt else "http"
+agent.set_env("APP_HOME_URL", f"{scheme}://{host}")
+if single_org:
+    agent.set_env("GRIST_SINGLE_ORG", single_org)
+else:
+    agent.unset_env("GRIST_SINGLE_ORG")
+
+# Make sure everything is saved inside the environment file
+# just before starting systemd unit
+agent.dump_env()
+
+# Grist serves plain HTTP on its container port: Traefik terminates TLS.
+# The route is removed automatically with the module, because the
+# "instance" attribute starts with MODULE_ID.
+response = agent.tasks.run(
+    agent_id=agent.resolve_agent_id("traefik@node"),
+    action="set-route",
+    data={
+        "instance": os.environ["MODULE_ID"],
+        "url": "http://127.0.0.1:" + os.environ["TCP_PORT"],
+        "host": host,
+        "http2https": http2https,
+        "lets_encrypt": lets_encrypt,
+    },
+)
+
+# Check if traefik configuration has been successfull
+agent.assert_exp(response["exit_code"] == 0, "The traefik set-route task failed!")

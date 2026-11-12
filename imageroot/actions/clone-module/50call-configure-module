@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+
+#
+# Copyright (C) 2026 Genius Dynamics
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+import os
+import agent
+import agent.tasks
+
+# The clone starts with a fresh data volume and its own secrets, but keeps
+# the settings of the source module.
+response = agent.tasks.run(agent_id=os.environ["AGENT_ID"], action="configure-module", data={
+    "host": os.environ["TRAEFIK_HOST"],
+    "http2https": os.environ["TRAEFIK_HTTP2HTTPS"] == "True",
+    "lets_encrypt": os.environ["TRAEFIK_LETS_ENCRYPT"] == "True",
+    "default_email": os.environ["GRIST_DEFAULT_EMAIL"],
+    "single_org": os.environ.get("GRIST_SINGLE_ORG", ""),
+})
+agent.assert_exp(response["exit_code"] == 0, "The configure-module subtask failed!")

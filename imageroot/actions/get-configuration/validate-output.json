@@ -5,21 +5,24 @@
     "description": "Get grist settings",
     "examples": [
         {
-            "host": "grist.domain.org",
+            "host": "grist.example.org",
             "http2https": true,
-            "lets_encrypt": true
+            "lets_encrypt": true,
+            "default_email": "admin@example.org",
+            "single_org": "grist"
         }
     ],
     "type": "object",
     "required": [
         "host",
         "http2https",
-        "lets_encrypt"
+        "lets_encrypt",
+        "default_email"
     ],
     "properties": {
         "host": {
             "type": "string",
-            "description": "Host name for the application, like 'grist.domain.org'",
+            "description": "Host name for the application, like 'grist.example.org'",
             "format": "idn-hostname"
         },
         "lets_encrypt": {
@@ -31,6 +34,18 @@
             "type": "boolean",
             "title": "HTTP to HTTPS redirection",
             "description": "Redirect all the HTTP requests to HTTPS"
+        },
+        "default_email": {
+            "type": "string",
+            "title": "Administrator email",
+            "description": "Email address of the Grist installation administrator and owner of the first team site",
+            "format": "email"
+        },
+        "single_org": {
+            "type": "string",
+            "title": "Team site name",
+            "description": "Name of the single team site served at the root of the host, lowercase letters, digits and hyphens. Empty to serve multiple team sites under /o/<name>",
+            "pattern": "^[a-z0-9-]*$"
         }
     }
 }
