@@ -23,7 +23,7 @@
       <cv-column>
         <cv-tile light>
           <cv-form @submit.prevent="configureModule">
-            <cv-text-input
+            <NsTextInput
               :label="$t('settings.grist_fqdn')"
               placeholder="grist.example.org"
               v-model.trim="host"
@@ -32,8 +32,8 @@
               :disabled="loading.getConfiguration || loading.configureModule"
               ref="host"
             >
-            </cv-text-input>
-            <cv-toggle
+            </NsTextInput>
+            <NsToggle
               value="letsEncrypt"
               :label="$t('settings.lets_encrypt')"
               v-model="isLetsEncryptEnabled"
@@ -46,8 +46,8 @@
               <template slot="text-right">{{
                 $t("settings.enabled")
               }}</template>
-            </cv-toggle>
-            <cv-toggle
+            </NsToggle>
+            <NsToggle
               value="httpToHttps"
               :label="$t('settings.http_to_https')"
               v-model="isHttpToHttpsEnabled"
@@ -60,15 +60,29 @@
               <template slot="text-right">{{
                 $t("settings.enabled")
               }}</template>
-            </cv-toggle>
-              <!-- advanced options -->
-            <cv-accordion ref="accordion" class="maxwidth mg-bottom">
-              <cv-accordion-item :open="toggleAccordion[0]">
-                <template slot="title">{{ $t("settings.advanced") }}</template>
-                <template slot="content">
-                </template>
-              </cv-accordion-item>
-            </cv-accordion>
+            </NsToggle>
+            <NsTextInput
+              :label="$t('settings.default_email')"
+              placeholder="admin@example.org"
+              v-model.trim="defaultEmail"
+              class="mg-bottom"
+              :helper-text="$t('settings.default_email_helper')"
+              :invalid-message="$t(error.default_email)"
+              :disabled="loading.getConfiguration || loading.configureModule"
+              ref="default_email"
+            >
+            </NsTextInput>
+            <NsTextInput
+              :label="$t('settings.single_org')"
+              placeholder="grist"
+              v-model.trim="singleOrg"
+              class="mg-bottom"
+              :helper-text="$t('settings.single_org_helper')"
+              :invalid-message="$t(error.single_org)"
+              :disabled="loading.getConfiguration || loading.configureModule"
+              ref="single_org"
+            >
+            </NsTextInput>
             <cv-row v-if="error.configureModule">
               <cv-column>
                 <NsInlineNotification
@@ -123,6 +137,8 @@ export default {
       },
       urlCheckInterval: null,
       host: "",
+      defaultEmail: "",
+      singleOrg: "",
       isLetsEncryptEnabled: false,
       isHttpToHttpsEnabled: true,
       loading: {
@@ -133,8 +149,12 @@ export default {
         getConfiguration: "",
         configureModule: "",
         host: "",
+        defaultEmail: "",
+        singleOrg: "",
         lets_encrypt: "",
         http2https: "",
+        default_email: "",
+        single_org: "",
       },
     };
   },
@@ -200,6 +220,8 @@ export default {
     getConfigurationCompleted(taskContext, taskResult) {
       const config = taskResult.output;
       this.host = config.host;
+      this.defaultEmail = config.default_email;
+      this.singleOrg = config.single_org;
       this.isLetsEncryptEnabled = config.lets_encrypt;
       this.isHttpToHttpsEnabled = config.http2https;
 
@@ -215,6 +237,14 @@ export default {
 
         if (isValidationOk) {
           this.focusElement("host");
+        }
+        isValidationOk = false;
+      }
+      if (!this.defaultEmail) {
+        this.error.default_email = "common.required";
+
+        if (isValidationOk) {
+          this.focusElement("default_email");
         }
         isValidationOk = false;
       }
@@ -236,8 +266,6 @@ export default {
       }
     },
     async configureModule() {
-      this.error.test_imap = false;
-      this.error.test_smtp = false;
       const isValidationOk = this.validateConfigureModule();
       if (!isValidationOk) {
         return;
@@ -271,6 +299,8 @@ export default {
             host: this.host,
             lets_encrypt: this.isLetsEncryptEnabled,
             http2https: this.isHttpToHttpsEnabled,
+            default_email: this.defaultEmail,
+            single_org: this.singleOrg,
           },
           extra: {
             title: this.$t("settings.instance_configuration", {
@@ -309,9 +339,5 @@ export default {
 @import "../styles/carbon-utils";
 .mg-bottom {
   margin-bottom: $spacing-06;
-}
-
-.maxwidth {
-  max-width: 38rem;
 }
 </style>
