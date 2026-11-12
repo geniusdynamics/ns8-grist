@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 #
-# Copyright (C) 2022 Nethesis S.r.l.
+# Copyright (C) 2026 Genius Dynamics
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 
@@ -11,13 +11,17 @@ import agent
 
 request = json.load(sys.stdin)
 
-original_environment = request['environment']
+original_environment = request["environment"]
 
 for evar in [
-        "TRAEFIK_HOST",
-        "TRAEFIK_HTTP2HTTPS",
-        "TRAEFIK_LETS_ENCRYPT",
-    ]:
-    agent.set_env(evar, original_environment[evar])
+    "TRAEFIK_HOST",
+    "TRAEFIK_HTTP2HTTPS",
+    "TRAEFIK_LETS_ENCRYPT",
+    "GRIST_DEFAULT_EMAIL",
+    "GRIST_SINGLE_ORG",
+]:
+    # GRIST_SINGLE_ORG is unset when a multi-team site was configured
+    if evar in original_environment:
+        agent.set_env(evar, original_environment[evar])
 
 agent.dump_env()

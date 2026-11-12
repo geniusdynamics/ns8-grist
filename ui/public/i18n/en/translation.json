@@ -19,26 +19,31 @@
     "no_services": "No services",
     "no_images": "No images",
     "no_volumes": "No volumes",
-    "grist_webapp": "grist webapp",
+    "grist_webapp": "Grist web app",
     "not_configured": "Not configured",
-    "open_webapp": "Open grist",
+    "open_webapp": "Open Grist",
     "configure": "Configure"
   },
   "settings": {
     "title": "Settings",
     "configure_instance": "Configure {instance}",
     "save": "Save",
-    "grist_fqdn": "grist hostname (FQDN)",
+    "grist_fqdn": "Grist hostname (FQDN)",
     "lets_encrypt": "Request LE Certificate",
     "http_to_https": "Force HTTPS",
     "enabled": "Enabled",
     "disabled": "Disabled",
-    "advanced": "Advanced",
+    "default_email": "Administrator email",
+    "default_email_helper": "The user who logs in with this email becomes the Grist administrator",
+    "single_org": "Team site name",
+    "single_org_helper": "Lowercase letters, digits and hyphens. Leave empty to serve multiple team sites",
     "configuring": "Configuring",
-    "instance_configuration": "Configure grist",
+    "instance_configuration": "Configure Grist",
     "domain_already_used_in_traefik": "Domain already used in traefik",
     "host_pattern": "Must be a valid fully qualified domain name",
-    "host_format": "Must be a valid fully qualified domain name"
+    "host_format": "Must be a valid fully qualified domain name",
+    "default_email_format": "Must be a valid email address",
+    "single_org_pattern": "Only lowercase letters, digits and hyphens are allowed"
   },
   "about": {
     "title": "About"
