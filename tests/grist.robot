@@ -39,12 +39,14 @@ Check if the configuration is returned
     ${output}  ${rc} =    Execute Command    api-cli run module/${module_id}/get-configuration
     ...    return_rc=True
     Should Be Equal As Integers    ${rc}  0
-    &{config} =    Evaluate    json.loads($output)['output']    json
+    &{config} =    Evaluate    json.loads($output)    json
     Should Be Equal    ${config.host}    ${HOST}
     Should Be Equal    ${config.default_email}    admin@example.org
 
 Check if grist works as expected
-    Wait Until Keyword Succeeds    120s    3s    Grist answers through Traefik
+    ${rc} =    Execute Command    bash -c 'for i in $(seq 1 60); do curl -k -s -o /dev/null -f --resolve ${HOST}:443:127.0.0.1 https://${HOST}/ && exit 0; sleep 5; done; exit 1'
+    ...    return_rc=True  return_stdout=False
+    Should Be Equal As Integers    ${rc}  0
 
 Take screenshots
     [Tags]    ui
