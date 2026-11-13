@@ -2,7 +2,7 @@
   "name": "grist",
   "description": {
     "en": "Relational spreadsheet that combines the flexibility of a spreadsheet with the robustness of a database, for self-hosted data management.",
-    "it": "Foglio di calcolo relazionale che unisce la flessibilità di un foglio elettronico alla robustezza di un database, per gestire i dati in self-hosting."
+    "it": "Grist è un foglio di calcolo self-hosted che funziona come un database, con formule, tabelle collegate e regole di accesso."
   },
   "categories": [
     "office"
